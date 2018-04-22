@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+    <head>
+	<title>BSE :: SENSEX </title>
+	<style>
+		.title-head{
+			position:fixed;
+			left:38%;
+			font-size:50px;
+			text-shadow:2px 2px 5px rgb(186, 187, 188,0.8 );
+			color:rgb(252, 130, 42);
+			display:inline-block;
+		}
+		.main-container{
+			 height: 65%;
+   			 width: 80%;
+    			 box-shadow:2px 2px 5px 6px  rgb(186, 187, 188,0.8 );
+    			 position:fixed;
+    			 top: 15%;
+			 left:10%;
+			 border-radius:5px;
+		}
+		thead{
+			background-color:rgb(186, 187, 188)
+		}
+		th{ padding:10px 57.5px 10px 57.5px;}
+		td{ padding: 10px 32px 10px 64px;
+		    background-color:rgb(119, 119, 119);
+		 }
+		.query-form{
+			float:right;
+			margin:50px 150px 0px 0px;	
+		}
+	</style>
+    </head>
+    <body background="{% static 'stockinfo/images/bse.jpg' %}">
+	<h1 class="title-head">BSE SENSEX </h1>
+	<form class="query-form" method="post" action="">{% csrf_token %}
+		
+		<input type='text' name='query' value=''placeholder='search by name' />
+		<button type="submit">search</button>
+	</form>
+	<div class="main-container">
+	    <table>
+		<thead><th style="padding:10px 30px 10px 30px">NAME</th><th>CODE</th><th>HIGH</th><th>OPEN</th><th>LOW</th><th>CLOSE</th></thead>
+		{% for name, data in sensex_data%}
+		  <tr><td>{{name}}</td><td>{{data.SC_CODE}}</td><td>{{data.HIGH}}</td><td>{{data.OPEN}}</td><td>{{data.LOW}}</td><td>{{data.CLOSE}}</td></tr>
+		{% endfor %}
+	    </table>
+	</div>
+    </body>
+</html>
