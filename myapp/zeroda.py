@@ -32,7 +32,6 @@ def gathering_data():
 	base_url = 'http://www.bseindia.com/'
 	equity_zip_url = base_url+'/download/BhavCopy/Equity/'
 	file_name = 'EQ'+get_strdate()+'_CSV' +'.ZIP'
-	import pdb; pdb.set_trace()
 	try:
 		open(os.path.join(BASE_DIR, file_name))
 	except:
