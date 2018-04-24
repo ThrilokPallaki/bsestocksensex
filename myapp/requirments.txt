@@ -1,4 +1,7 @@
-requests
-redis
-django_redis
-
+Django==1.11
+django-redis==4.9.0
+pytz==2018.4
+query-string==1.0.1
+redis==2.10.6
+requests==2.18.4
+urllib3==1.22

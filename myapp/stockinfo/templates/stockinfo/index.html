@@ -21,6 +21,7 @@
 			 left:10%;
 			 margin-top:-100px;
 			 border-radius:5px;
+			 overflow-y:scroll;
 		}
 		thead{
 			background-color:rgb(186, 187, 188)
@@ -55,27 +56,51 @@
     			color: black;
 		}
 	</style>
+	<script>
+		function validationForm(){ 
+			var query = document.forms["search_query"]["query"].value;
+			if(query ==""|| query == null){
+				alert('Search box is empty');
+				return false;
+			}
+		}
+	</script>
     </head>
     <body background="{% static 'stockinfo/images/bse.jpg' %}">
 	<h1 class="title-head">BSE SENSEX </h1>
-	<form class="query-form" method="post" action="">{% csrf_token %}	
-		<input type='text' name='query' value=''placeholder='search by name' pattern="[a-zA-Z0-9]{1,}" title="Only alphabets and numbers are allowed." />
+	<form class="query-form" method="post" action="" name="search_query" onsubmit="return validationForm()">{% csrf_token %}
+		<input type='text'autocomplete='false' name='query' value=''placeholder='search by name' pattern="[a-zA-Z0-9\s]{1,}" title="Only alphabets and numbers are allowed." />
 		<button type="submit">search</button>
 	</form>
 	<div class="main-container">
-	    <table style="width:100%;">
-		<thead><th style="padding:10px 30px 10px 30px">NAME</th><th>CODE</th><th>HIGH</th><th>OPEN</th><th>LOW</th><th>CLOSE</th></thead>
+	    <table style="width:100%;" >
+		<thead><th>NAME</th><th>CODE</th><th>HIGH</th><th>OPEN</th><th>LOW</th><th>CLOSE</th></thead>
 	{% if error %}
 		<div class="alert">
   			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-  			<strong>Sorry!</strong>No record found with the name.
+  			<strong>Sorry!  </strong>No record found with the name.
 		</div>
 	{% else %}
-		{% for name, data in sensex_data%}
-		  <tr><td>{{name}}</td><td>{{data.SC_CODE}}</td><td>{{data.HIGH}}</td><td>{{data.OPEN}}</td><td>{{data.LOW}}</td><td>{{data.CLOSE}}</td></tr>
+		{% for data in sensex_data %}
+		  {% for row in data %}
+		  	<tr><td>{{row.SC_NAME}}</td><td>{{row.SC_CODE}}</td><td>{{row.HIGH}}</td><td>{{row.OPEN}}</td><td>{{row.LOW}}</td><td>{{row.CLOSE}}</td></tr>
+		  {% endfor %}
 		{% endfor %}
 	    </table>
 	{% endif %}
 	</div>
+		<div class="paginator" style="position:fixed; left:40%; top:85%;">
+   		     <span class="step-links">
+               		 {% if sensex_data.has_previous %}
+                        	<a href="?page={{ sensex_data.previous_page_number }}">previous</a>
+                	{% endif %}
+                     <span class="current">
+                         Page {{ sensex_data.number }} of {{ sensex_data.paginator.num_pages }}.
+        	     </span>
+        	    {% if sensex_data.has_next %}
+            		<a href="?page={{ sensex_data.next_page_number }}">next</a>
+        	    {% endif %}
+   		     </span>
+	        </div>
     </body>
 </html>

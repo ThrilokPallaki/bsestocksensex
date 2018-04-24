@@ -4,6 +4,7 @@ import requests
 import datetime
 import zipfile
 import os
+import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,24 +41,18 @@ def filter_data_push_into_redis():
 	with open(os.path.join(BASE_DIR, file_name)) as csv_file:
 		csv_reader = csv.DictReader(csv_file)
 		fieldnames = ['SC_NAME', 'SC_CODE', 'HIGH', 'LOW', 'CLOSE', 'OPEN']
-		#exclude_fieldnames = ['PREVCLOSE', 'LAST', 'NO_OF_SHRS', 'NET_TURNOV', 'NO_TRADES', 'SC_GROUP', 'TDCLOINDI', 'SC_TYPE']
 		r = red.Redis()
 		r.flushall()
 		for dict_row in csv_reader:
 			for col in dict_row:
 				dict_row[col]=dict_row[col].strip()
-			r.hmset(dict_row['SC_NAME'], {key: dict_row[key] for key in fieldnames[1:]})
+			r.hmset(dict_row['SC_NAME'], {key: dict_row[key] for key in fieldnames})
 			r.lpush('bse_keys', dict_row['SC_NAME'])
+			wlist = dict_row['SC_NAME'].split(' ')
+			#import pdb;pdb.set_trace()
+			for w in wlist:
+				r.lpush('bse_keys_words',json.dumps(list((w, dict_row['SC_NAME']))))
   
-
-#def push_into_redis():
-#	with open('/home/thrilok/new.csv', 'r') as csv_file:
-#		csv_reader = csv.DictReader(csv_file, delimiter='\t')
-#	 	r = red.Redis()
-#		for row in csv_reader:
-#			a = {key: row[key] for key in row.keys() if key != 'SC_NAME'}
-#			r.hmset(row['SC_NAME'], a)
-#
 
 
 if __name__ == '__main__':
