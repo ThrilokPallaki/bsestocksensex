@@ -18,17 +18,6 @@ def get_strdate():
 
 
 def gathering_data():
-	#base_url = 'http://www.bseindia.com/markets/equity/EQReports/BhavCopyDebt.aspx?expandable=3'
-	#req = requests.get(base_url)
-	#soup = bs(req.content, 'html.parser')
-	#iframe = soup.find('iframe')
-	#url = iframe.attrs['src']
-	#equity_zip_url = base_url.rsplit('/', )[0] + '/'+ url
-	#req = requests.get(equity_url)
-	#soup = bs(req.content, 'html.parser')
-	#links = soup.findAll('a')
-	#zip_links = [link['href'] for link in links if 'href' in link.attrs and link['href'].endswith('ZIP')]
-	#req = requests.get(zip_links[0])
 	base_url = 'http://www.bseindia.com/'
 	equity_zip_url = base_url+'/download/BhavCopy/Equity/'
 	file_name = 'EQ'+get_strdate()+'_CSV' +'.ZIP'
@@ -46,14 +35,14 @@ def unzip_file():
 	zip_file.extractall()
 
 
-def filter_data_push_into_redis(): 
-	str_date = datetime.date.today().strftime('%d%m%y')
+def filter_data_push_into_redis():
 	file_name = 'EQ'+get_strdate()+'.CSV'
 	with open(os.path.join(BASE_DIR, file_name)) as csv_file:
 		csv_reader = csv.DictReader(csv_file)
 		fieldnames = ['SC_NAME', 'SC_CODE', 'HIGH', 'LOW', 'CLOSE', 'OPEN']
 		#exclude_fieldnames = ['PREVCLOSE', 'LAST', 'NO_OF_SHRS', 'NET_TURNOV', 'NO_TRADES', 'SC_GROUP', 'TDCLOINDI', 'SC_TYPE']
 		r = red.Redis()
+		r.flushall()
 		for dict_row in csv_reader:
 			for col in dict_row:
 				dict_row[col]=dict_row[col].strip()

@@ -4,6 +4,5 @@ from . import views
 app_name='stockinfo'
 urlpatterns=[
 	url(r'^$', views.index, name='index'),
-	url(r'search/(?P<query>)$', views.search, name='search'),
 
 ]

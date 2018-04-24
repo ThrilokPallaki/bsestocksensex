@@ -17,8 +17,9 @@
    			 width: 80%;
     			 box-shadow:2px 2px 5px 6px  rgb(186, 187, 188,0.8 );
     			 position:fixed;
-    			 top: 15%;
+    			 top: 30%;
 			 left:10%;
+			 margin-top:-100px;
 			 border-radius:5px;
 		}
 		thead{
@@ -32,22 +33,49 @@
 			float:right;
 			margin:50px 150px 0px 0px;	
 		}
+		.alert {
+			 padding: 20px;
+			 background-color: #f44336;
+			 color: white;
+			 border-style:5px solid #c4c5c6;
+		}
+
+		.closebtn {
+    			 margin-left: 15px;
+    			 color: white;
+    			 font-weight: bold;
+    			 float: right;
+    			 font-size: 22px;
+    			 line-height: 20px;
+    			 cursor: pointer;
+    			 transition: 0.3s;
+		}
+
+		.closebtn:hover {
+    			color: black;
+		}
 	</style>
     </head>
     <body background="{% static 'stockinfo/images/bse.jpg' %}">
 	<h1 class="title-head">BSE SENSEX </h1>
-	<form class="query-form" method="post" action="">{% csrf_token %}
-		
-		<input type='text' name='query' value=''placeholder='search by name' />
+	<form class="query-form" method="post" action="">{% csrf_token %}	
+		<input type='text' name='query' value=''placeholder='search by name' pattern="[a-zA-Z0-9]{1,}" title="Only alphabets and numbers are allowed." />
 		<button type="submit">search</button>
 	</form>
 	<div class="main-container">
-	    <table>
+	    <table style="width:100%;">
 		<thead><th style="padding:10px 30px 10px 30px">NAME</th><th>CODE</th><th>HIGH</th><th>OPEN</th><th>LOW</th><th>CLOSE</th></thead>
+	{% if error %}
+		<div class="alert">
+  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  			<strong>Sorry!</strong>No record found with the name.
+		</div>
+	{% else %}
 		{% for name, data in sensex_data%}
 		  <tr><td>{{name}}</td><td>{{data.SC_CODE}}</td><td>{{data.HIGH}}</td><td>{{data.OPEN}}</td><td>{{data.LOW}}</td><td>{{data.CLOSE}}</td></tr>
 		{% endfor %}
 	    </table>
+	{% endif %}
 	</div>
     </body>
 </html>
