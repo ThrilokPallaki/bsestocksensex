@@ -2,105 +2,120 @@
 <html>
 {% load static %}
     <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>BSE :: SENSEX </title>
+	<link rel="icon" type="image/png" href="{% static 'stockinfo/images/favicon.ico'%}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'stockinfo/vendor/bootstrap/css/bootstrap.min.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'stockinfo/fonts/font-awesome-4.7.0/css/font-awesome.min.css'%}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'stockinfo/vendor/perfect-scrollbar/perfect-scrollbar.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'stockinfo/css/util.css'%}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'stockinfo/css/main.css'%}" />
+	<script src="{% static 'stockinfo/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'stockinfo/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'stockinfo/vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
 	<style>
 		.title-head{
-			position:fixed;
-			left:38%;
+			float:left;
 			font-size:50px;
 			text-shadow:2px 2px 5px rgb(186, 187, 188,0.8 );
 			color:rgb(252, 130, 42);
-			display:inline-block;
 		}
-		.main-container{
-			 height: 65%;
-   			 width: 80%;
-    			 box-shadow:2px 2px 5px 6px  rgb(186, 187, 188,0.8 );
-    			 position:fixed;
-    			 top: 30%;
-			 left:10%;
-			 margin-top:-100px;
-			 border-radius:5px;
-			 overflow-y:scroll;
-		}
-		thead{
-			background-color:rgb(186, 187, 188)
-		}
+		thead{background-color:rgb(186, 187, 188)}
 		th{ padding:10px 57.5px 10px 57.5px;}
-		td{ padding: 10px 32px 10px 64px;
-		    background-color:rgb(119, 119, 119);
-		 }
+		td{ padding: 10px 32px 10px 64px; }
 		.query-form{
+			padding:10px;
 			float:right;
-			margin:50px 150px 0px 0px;	
 		}
-		.alert {
-			 padding: 20px;
-			 background-color: #f44336;
-			 color: white;
-			 border-style:5px solid #c4c5c6;
-		}
+		.form_search{ margin-right:20px;border:2px solid #dbe7f9;border-radius:5px;}
 
-		.closebtn {
-    			 margin-left: 15px;
-    			 color: white;
-    			 font-weight: bold;
-    			 float: right;
-    			 font-size: 22px;
-    			 line-height: 20px;
-    			 cursor: pointer;
-    			 transition: 0.3s;
-		}
-
-		.closebtn:hover {
-    			color: black;
-		}
 	</style>
-	<script>
-		function validationForm(){ 
-			var query = document.forms["search_query"]["query"].value;
-			if(query ==""|| query == null){
-				alert('Search box is empty');
-				return false;
-			}
+
+<script>
+	function validationForm(){ 
+		var query = document.forms["search_query"]["query"].value;
+		if(query ==""|| query == null){
+			alert('Search box is empty.');
+			return false;
+		}else if(query.length < 3) {
+			alert('Minimum 3 alphanumeric charachters required.');
+			return false;
 		}
-	</script>
-    </head>
-    <body background="{% static 'stockinfo/images/bse.jpg' %}">
+	}
+
+	
+</script>
+</head>
+<body style=" overflow-y:scroll; overflow-x:hidden;">
+<div class="container">
 	<h1 class="title-head">BSE SENSEX </h1>
-	<form class="query-form" method="post" action="" name="search_query" onsubmit="return validationForm()">{% csrf_token %}
-		<input type='text'autocomplete='false' name='query' value=''placeholder='search by name' pattern="[a-zA-Z0-9\s]{1,}" title="Only alphabets and numbers are allowed." />
-		<button type="submit">search</button>
+	<form class="form-inline query-form" method="post" action="" name="search_query" onsubmit="return validationForm()">{% csrf_token %}
+	    <div class="form-group">
+		<input type='text' name='query' class="form_search" placeholder='search by name' pattern="[a-zA-Z0-9\s]{1,}" autocomplete="off"  title="Only alphabets, numbers and spaces are allowed." />
+		<button class="btn btn-primary" style="float:left;" type="submit">search</button>
+	    </div>
 	</form>
-	<div class="main-container">
-	    <table style="width:100%;" >
-		<thead><th>NAME</th><th>CODE</th><th>HIGH</th><th>OPEN</th><th>LOW</th><th>CLOSE</th></thead>
-	{% if error %}
-		<div class="alert">
-  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-  			<strong>Sorry!  </strong>No record found with the name.
+</div>
+	<div class="limiter"> 
+		<div class="container-table100">
+			<div class="wrap-table100">
+				<div class="table100 ver1 m-b-110">
+				    <div class="table100-head">
+					<table>
+						<thead>
+							<tr class="row100 head">
+								<td class="cell100 column1" style="background-color:#6c7ae0; color:#fff;">NAME</td>
+								<td class="cell100 column2" style="background-color:#6c7ae0; color:#fff;">CODE</td>
+								<td class="cell100 column3" style="background-color:#6c7ae0; color:#fff;">HIGH</td>
+								<td class="cell100 column4" style="background-color:#6c7ae0; color:#fff;">OPEN</td>
+								<td class="cell100 column5" style="background-color:#6c7ae0; color:#fff;">CLOSE</td>
+							</tr>
+						</thead>
+					</table>
+				    </div>
+				<div class="table100-body js-pscroll">
+					<table>
+						<tbody>
+							{% for data in sensex_data %}
+								{% for row in data %}
+									<tr class="row100 body">
+										<td class="cell100 column1">{{row.SC_NAME}}</td>
+										<td class="cell100 column2">{{row.SC_CODE}}</td>
+										<td class="cell100 column3">{{row.HIGH}}</td>
+										<td class="cell100 column4">{{row.OPEN}}</td>
+										<td class="cell100 column5">{{row.CLOSE}}</td>
+									</tr>
+								{% endfor %}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
-	{% else %}
-		{% for data in sensex_data %}
-		  {% for row in data %}
-		  	<tr><td>{{row.SC_NAME}}</td><td>{{row.SC_CODE}}</td><td>{{row.HIGH}}</td><td>{{row.OPEN}}</td><td>{{row.LOW}}</td><td>{{row.CLOSE}}</td></tr>
-		  {% endfor %}
-		{% endfor %}
-	    </table>
-	{% endif %}
 	</div>
-		<div class="paginator" style="position:fixed; left:40%; top:85%;">
-   		     <span class="step-links">
-               		 {% if sensex_data.has_previous %}
-                        	<a href="?page={{ sensex_data.previous_page_number }}">previous</a>
-                	{% endif %}
-                     <span class="current">
-                         Page {{ sensex_data.number }} of {{ sensex_data.paginator.num_pages }}.
-        	     </span>
+</div>
+<div class="paginator" style="position:absolute; top:110%; left:45%;">
+     <span class="step-links">
+       		 {% if sensex_data.has_previous %}
+                       	<a href="?page={{ sensex_data.previous_page_number }}">previous</a>
+               	{% endif %}
+                    <span class="current">
+                        Page {{ sensex_data.number }} of {{ sensex_data.paginator.num_pages }}.
+                    </span>
         	    {% if sensex_data.has_next %}
             		<a href="?page={{ sensex_data.next_page_number }}">next</a>
         	    {% endif %}
-   		     </span>
-	        </div>
-    </body>
+  		     </span>
+</div>
+<script>
+	$('.js-pscroll').each(function(){
+	var ps = new PerfectScrollbar(this);
+	$(window).on('resize', function(){
+		ps.update();
+	});
+});
+
+</script>
+</body>
 </html>
