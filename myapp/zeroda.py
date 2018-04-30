@@ -49,7 +49,6 @@ def filter_data_push_into_redis():
 			r.hmset(dict_row['SC_NAME'], {key: dict_row[key] for key in fieldnames})
 			r.lpush('bse_keys', dict_row['SC_NAME'])
 			wlist = dict_row['SC_NAME'].split(' ')
-			#import pdb;pdb.set_trace()
 			for w in wlist:
 				r.lpush('bse_keys_words',json.dumps(list((w, dict_row['SC_NAME']))))
   
