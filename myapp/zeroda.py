@@ -17,27 +17,36 @@ def get_strdate():
 	 else:
 		return (date - datetime.timedelta(1)).strftime('%d%m%y')
 
+DATE = get_strdate()
 
 def gathering_data():
 	base_url = 'http://www.bseindia.com/'
-	equity_zip_url = base_url+'/download/BhavCopy/Equity/'
-	file_name = 'EQ'+get_strdate()+'_CSV' +'.ZIP'
+	equity_zip_url = base_url+'download/BhavCopy/Equity/'
+	file_name = 'EQ'+DATE+'_CSV' +'.ZIP'
 	try:
 		open(os.path.join(BASE_DIR, file_name))
+		print("Data is not updated from the last date. %s"% DATE)
 	except:
-		req = requests.get(equity_zip_url+file_name)
-		with open(os.path.join(BASE_DIR, file_name), 'wb') as zip_file:
-			zip_file.write(req.content)
-
+		print("Getting data from the internet.....\n")
+		try:	
+			req = requests.get(equity_zip_url + file_name)
+			if req is not None:
+				last_date_of_data = DATE	
+				with open(os.path.join(BASE_DIR, file_name), 'wb') as zip_file:
+					zip_file.write(req.content)
+			else:
+				print("Data is not updated from the last date. %s"%DATE)
+		except:
+			print("Somethig went wrong!")
 
 def unzip_file():
-	file_name = 'EQ'+get_strdate()+'_CSV' +'.ZIP'
+	file_name = 'EQ'+DATE+'_CSV' +'.ZIP'
 	zip_file = zipfile.ZipFile(os.path.join(BASE_DIR, file_name))
 	zip_file.extractall()
 
 
 def filter_data_push_into_redis():
-	file_name = 'EQ'+get_strdate()+'.CSV'
+	file_name = 'EQ'+DATE+'.CSV'
 	with open(os.path.join(BASE_DIR, file_name)) as csv_file:
 		csv_reader = csv.DictReader(csv_file)
 		fieldnames = ['SC_NAME', 'SC_CODE', 'HIGH', 'LOW', 'CLOSE', 'OPEN']
